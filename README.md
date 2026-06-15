@@ -1,28 +1,76 @@
-# IonoForecast
+# StormSurge
 
-An ML-ready ionospheric disturbance dataset and short-term forecasting system.
+**An extreme-event benchmark and physics-constrained ML framework for 
+thermospheric density forecasting during geomagnetic storms.**
 
-Built for NASA x Hack Club Stardance Challenge 2026.
+Built for the NASA × Hack Club Stardance Challenge 2026.
 
-## What this project does
+---
 
-The ionosphere — a charged layer of Earth's upper atmosphere — directly affects
-GPS accuracy, radio communications, aviation, and power grids. When the Sun is
-active, it disturbs the ionosphere and these systems degrade or fail.
+## The Problem
 
-This project:
-1. Builds the first clean, unified, ML-ready dataset combining solar wind,
-   geomagnetic indices, and ionospheric TEC measurements (1995–2024)
-2. Trains a Temporal Fusion Transformer to forecast ionospheric disturbances
-   1, 3, and 6 hours ahead with calibrated confidence intervals
+When extreme geomagnetic storms hit Earth, the thermosphere heats up and 
+expands — satellite drag can spike 10× within hours. The May 2024 Gannon 
+storm (the strongest in over 20 years) caused the largest satellite mass 
+migration in history and severely degraded collision avoidance systems 
+worldwide for multiple days.
 
-## Data sources
+Existing empirical and ML models show significantly degraded performance 
+under extreme storm conditions. The core issue: models trained on quiet 
+and moderate storm data cannot reliably extrapolate to the rare but 
+catastrophic tail of the distribution.
 
-| Source | Variables | Link |
-|--------|-----------|------|
-| NASA OMNI | Solar wind speed, density, Bz | omniweb.gsfc.nasa.gov |
-| NOAA SWPC | Kp index, Dst index | swpc.noaa.gov |
-| NASA/JPL GIM | Global ionospheric TEC maps | cddis.nasa.gov |
-| NOAA NGDC | Flare/CME event labels | ngdc.noaa.gov |
+**StormSurge addresses this in three parts:**
 
-## Project structure
+1. **Benchmark** — A rigorous held-out evaluation suite using the May 2024 
+   Gannon storm (G5) and October 2024 storm (G4) as extreme test cases. 
+   No published focused benchmark exists for these two events combined.
+
+2. **Baselines** — Systematic comparison of persistence, NRLMSIS-2.0, 
+   JB2008, and STORM-AI-style ML models against the benchmark.
+
+3. **Model** — A transformer-based forecaster with physics-inspired 
+   constraints, storm-intensity weighted training, and calibrated 
+   uncertainty quantification.
+
+If the model only improves modestly, the benchmark is still a standalone 
+research contribution.
+
+---
+
+## Why This Matters
+
+- 9,000+ satellites currently operate in LEO
+- We are in the most active phase of Solar Cycle 25
+- Accurate drag forecasting during extreme storms is critical for 
+  collision avoidance, orbital maintenance, and mission planning
+- NASA, ESA, and commercial operators have no reliable short-term 
+  density forecast for G4–G5 events
+
+---
+
+## Contributions
+
+- First focused held-out benchmark using Gannon 2024 + October 2024 
+  as combined extreme-event test set
+- Physics-inspired training constraints (realistic lag, recovery 
+  dynamics, NRLMSIS-2.0 as prior feature) to improve extrapolation
+- Storm-intensity weighted training strategy targeting G4–G5 events
+- Calibrated uncertainty output for operational use
+- Open-source, reproducible, documented for the research community
+
+---
+
+## Data Sources
+
+| Source | Variables | Access |
+|--------|-----------|--------|
+| STORM-AI devkit (MIT ARCLab) | Density + space weather, pre-cleaned | github.com/ARCLab-MIT/STORM-AI-devkit-2025 |
+| NASA OMNI | Solar wind, IMF Bz | omniweb.gsfc.nasa.gov |
+| NOAA SWPC | Kp, Dst, AE indices | swpc.noaa.gov |
+| ESA Swarm A/B/C | In-situ thermospheric density | earth.esa.int |
+| NRLMSIS-2.0 | Empirical model prior | via `nrlmsise00` Python package |
+
+---
+
+## Project Structure
